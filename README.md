@@ -36,7 +36,7 @@ bash .github/golden-path/lint.sh
 4. Push application changes to `develop-s34`; one CI run builds the evidence and artifact.
 5. Open PRs for `develop → feature → release → main`.
 6. A feature push automatically validates and deploys to its named `eint1`–`eint6`.
-7. A release push automatically validates once, then deploys the same artifact to the single shared environment named by the branch: `eqa` or `epreprod`.
+7. A release push automatically validates once, then deploys the same artifact to `eqa`, `epreprod`, or both. `release-epreprod-*` starts at ePreProd; `release-eqa-*` can continue from EQA to ePreProd when `PROMOTE_EQA_TO_EPREPROD` is `true`.
 8. Add exactly one `major`, `minor`, or `patch` label to the PR entering `main`.
 9. After merge, the verified release artifact is automatically promoted to `prod`.
 10. Production verification automatically creates the matching SemVer tag and GitHub Release.
