@@ -6,6 +6,7 @@ Runnable GitHub Enterprise Cloud proof-of-concept template based on the supplied
 
 - COUNTRY branch flow: `main → release → feature → develop`
 - Pull requests for `develop → feature → release → main`
+- Automatic `f###` traceability tag when a feature PR merges into a release branch
 - Hotfix flow: `main → hotfix → main → release → feature`
 - JUnit XML test evidence
 - Cobertura XML line coverage
@@ -35,11 +36,12 @@ bash .github/golden-path/lint.sh
 3. Create `develop-s34` from the feature branch.
 4. Push application changes to `develop-s34`; one CI run builds the evidence and artifact.
 5. Open PRs for `develop → feature → release → main`.
-6. A feature push automatically validates and deploys to its named `eint1`–`eint6`.
-7. A release push automatically validates once, then deploys the same artifact to the environment named by the branch: `release-eqa-*` goes to EQA and `release-epreprod-*` goes to ePreProd.
-8. Add exactly one `major`, `minor`, or `patch` label to the PR entering `main`.
-9. After merge, the verified release artifact is automatically promoted to `prod`.
-10. Production verification automatically creates the matching SemVer tag and GitHub Release.
+6. Merging `feature-eint1-f26` into the release branch automatically tags that release-branch merge commit as `f26`.
+7. A feature push automatically validates and deploys to its named `eint1`–`eint6`.
+8. A release push automatically validates once, then deploys the same artifact to the environment named by the branch: `release-eqa-*` goes to EQA and `release-epreprod-*` goes to ePreProd.
+9. Add exactly one `major`, `minor`, or `patch` label to the PR entering `main`.
+10. After merge, the verified release artifact is automatically promoted to `prod`.
+11. Production verification automatically creates the matching SemVer tag and GitHub Release.
 
 Normal pushes do not also start a second PR copy of CI. PR events run only the
 branch/release policy and the optional security workflow. Manual workflows are
