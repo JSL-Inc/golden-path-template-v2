@@ -1,6 +1,6 @@
 # Executive summary
 
-This proof of concept translates the supplied COUNTRY GitLab delivery standards into a native GitHub Enterprise Cloud Golden Path. It separates centrally maintained orchestration from application-specific commands, protects promotion with pull requests and status checks, retains test and security evidence, and promotes one immutable artifact through protected environments.
+This proof of concept translates the supplied GitLab delivery standards into a native GitHub Enterprise Cloud Golden Path. It separates centrally maintained orchestration from application-specific commands, protects promotion with pull requests and status checks, retains test and security evidence, and promotes one immutable artifact through protected environments.
 
 The POC intentionally preserves the current documented branch flow:
 
