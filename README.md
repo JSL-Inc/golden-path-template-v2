@@ -12,7 +12,7 @@ Runnable GitHub Enterprise Cloud proof-of-concept template based on the supplied
 - Blocking 80% coverage baseline with an approved transition mode
 - Tests before build for fail-fast feedback
 - Blocking build and code-quality checks
-- CodeQL, dependency review, Dependabot, and secret-protection guidance
+- Optional CodeQL and dependency review, plus Dependabot and secret-protection guidance
 - OWASP ZAP DAST against non-production targets
 - Build-once artifact promotion through `eint1`–`eint6`, `eqa`, `epreprod`, and `prod`
 - Semantic versioning and verified release creation
@@ -28,16 +28,22 @@ bash .github/golden-path/build.sh
 bash .github/golden-path/lint.sh
 ```
 
-## Branch demonstration
+## Automatic demonstration flow
 
 1. Create `release-eqa-poc-release` from `main`.
 2. Create `feature-eint1-f26` from the release branch.
 3. Create `develop-s34` from the feature branch.
-4. Open a PR from `develop-s34` to `feature-eint1-f26`.
-5. Promote feature to release and release to main using PRs.
-6. Run the release workflow with exactly one `major`, `minor`, or `patch` classification.
-7. Promote the same artifact through protected environments.
-8. Verify production before creating the official GitHub Release.
+4. Push application changes to `develop-s34`; one CI run builds the evidence and artifact.
+5. Open PRs for `develop → feature → release → main`.
+6. A feature push automatically validates and deploys to its named `eint1`–`eint6`.
+7. A release push automatically validates once, then promotes the same artifact through `eqa` and `epreprod`.
+8. Add exactly one `major`, `minor`, or `patch` label to the PR entering `main`.
+9. After merge, the verified release artifact is automatically promoted to `prod`.
+10. Production verification automatically creates the matching SemVer tag and GitHub Release.
+
+Normal pushes do not also start a second PR copy of CI. PR events run only the
+branch/release policy and the optional security workflow. Manual workflows are
+reserved for recovery, rollback, DAST, system, and performance demonstrations.
 
 Start with [docs/executive-summary.md](docs/executive-summary.md), then use
 [docs/architecture.md](docs/architecture.md),
