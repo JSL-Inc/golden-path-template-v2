@@ -1,4 +1,4 @@
-# Golden Path application template v2 — simplified version 1
+# Golden Path application template v2 — simplified version 2
 
 Minimal application starter for the GitLab-to-GitHub migration POC.
 
@@ -24,6 +24,10 @@ enforcement.
 
 Coverage is uploaded to GitHub Code Quality and the organization ruleset owns
 the 80% merge threshold.
+
+Production release versioning is intentionally POC-sized: every successful
+promotion automatically creates `v0.0.<delivery-run-number>`. Developers do not
+select release labels or update a version file.
 
 See [architecture](docs/architecture.md), [GitHub settings](docs/github-settings.md),
 and the [demo](docs/demo.md).
