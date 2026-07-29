@@ -2,6 +2,24 @@
 
 Runnable GitHub Enterprise Cloud proof-of-concept template based on the supplied COUNTRY standards.
 
+## Delivery behavior
+
+| Branch | Automated path |
+|---|---|
+| `develop-*` | Build, unit tests, coverage, and code quality |
+| `feature-eint1-f###` through `feature-eint6-f###` | Build, matching EINT deployment, integration, regression, INT Gate |
+| `release-eqa-*` / `hotfix-eqa-*` | Build, EQA, integration, regression, smoke, DAST policy, QA Gate |
+| `release-epreprod-*` / `hotfix-epreprod-*` | EQA path, then the same artifact through ePreProd and its gate |
+| `main` | Production deployment, smoke verification, SemVer tag, GitHub Release |
+
+Exactly one `major`, `minor`, or `patch` label on the PR to `main` determines
+the next version. A feature branch named with `f###` produces that feature tag
+when it merges into a release branch.
+
+The scripts are deliberately simple application adapter points. Replace their
+commands with real build, deployment, and test tools without changing the
+workflow order.
+
 ## Included controls
 
 - COUNTRY branch flow: `main → release → feature → develop`
@@ -24,10 +42,13 @@ Runnable GitHub Enterprise Cloud proof-of-concept template based on the supplied
 
 ```bash
 python -m pip install -r requirements.txt
-bash .github/golden-path/unit-test.sh
-bash .github/golden-path/build.sh
-bash .github/golden-path/lint.sh
+bash scripts/unit-test.sh
+bash scripts/build.sh
+ruff check calculator.py tests
 ```
+
+See [organization onboarding](docs/organization-onboarding.md) for automated
+repository setup and ruleset responsibilities.
 
 ## Automatic demonstration flow
 

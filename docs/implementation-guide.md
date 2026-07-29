@@ -1,70 +1,95 @@
-# Implementation guide
+# Golden Path implementation guide
 
-## 1. Central workflows
+## 1. One-time organization setup
 
-1. Publish `golden-path-workflows-v2`.
-2. Create the `v2` release branch at the reviewed commit.
-3. Restrict direct updates to the release channel for a production rollout.
-4. Replace the mutable POC channel with immutable tags or commit SHAs before broad adoption.
+Use `golden-path-workflows-v2` as the governance and provisioning repository.
 
-## 2. Application repository
+1. Add the `GOLDEN_PATH_ADMIN_TOKEN` Actions secret to that repository. For
+   production, prefer a GitHub App token with only the organization rules,
+   custom-property, repository-administration, environment, and issue metadata
+   permissions used by the workflows.
+2. Run **Apply Golden Path Governance** once. It creates the organization custom
+   properties and applies the three baseline organization rulesets.
+3. Create and attach the approved organization code-security configuration.
+   Enable CodeQL, dependency graph, Dependabot alerts/security updates, secret
+   scanning, and push protection where the organization license supports them.
+4. Replace the sample CODEOWNER with approved teams.
 
-1. Create from `golden-path-template-v2`.
-2. Replace the sample application and scripts beneath `.github/golden-path/`.
-3. Replace `@jacoblaw1` with approved CODEOWNERS teams.
-4. Run each workflow once before selecting its exact check name in a ruleset.
-5. Create the labels listed in `governance/settings.md`; only the three SemVer
-   labels affect automatic release versioning.
+Organization rulesets are the default source of truth. They target repositories
+whose `golden_path` custom property is `enabled`, so a new application does not
+need a copied repository ruleset.
 
-## 3. Repository settings
+## 2. Provision an application repository
 
-- Enable squash merge.
-- Disable merge commits and rebase merge.
-- Enable automatic head-branch deletion.
-- Enable vulnerability alerts and Dependabot security updates.
-- Enable CodeQL/default setup or the committed advanced workflow, secret scanning, and push protection where eligible.
-- Mark the approved source as a template repository.
+Run **Provision Golden Path Repository** in `golden-path-workflows-v2`.
 
-## 4. Rulesets
+Required input:
 
-Apply the JSON specifications in `governance/rulesets/` only after the corresponding checks have reported. Confirm the exact names in the repository UI because GitHub composes reusable-workflow job names.
+- Repository name
+- Description and visibility
+- Release path: `eqa-only` or `eqa-epreprod`
 
-Validate:
+Optional inputs:
 
-- Direct push blocked
-- Force push and deletion blocked
-- Strict status checks
-- Stale-review dismissal
-- Last-pusher approval
-- Resolved conversations
-- Squash-only merge
-- One feature approval and two release/main approvals
+- Shared-environment reviewer team ID
+- Production reviewer team ID
 
-Role-specific Developer/Maintainer and leadership/security approval requires real GitHub teams, CODEOWNERS, or an additional policy check.
+The workflow creates the repository from this template and reconciles:
 
-## 5. Environments
+- Repository merge and Actions settings
+- Standard labels
+- `eint1`–`eint6`, `eqa`, `epreprod`, and `prod` Environments
+- Deployment branch policies
+- Golden Path custom properties
+- Dependency vulnerability alerts and security updates
 
-Create `eint1` through `eint6`, `eqa`, `epreprod`, and `prod` from `governance/environments.json`. Add real reviewers, branch policies, scoped secrets/variables, and prevent self-review for protected stages. EINT, EQA, ePreProd, and production requests are automatic. Environment reviewers provide the human gates. Use **Rollback or Redeploy Artifact** only for recovery.
+The operation is safe to rerun. Existing labels and environments are updated
+instead of duplicated.
 
-## 6. Demonstration branches
+## 3. Adapt the generated repository
 
-- `release-eqa-poc-release` from `main`
-- `feature-eint1-f26` from that release branch
-- `develop-s34` from that feature branch
+1. Replace `calculator.py` and the sample tests with the application.
+2. Replace the commands in `scripts/` with real build, test, deployment, and
+   verification commands. Keep the workflow job names stable because rulesets
+   require the final gate checks.
+3. Replace the sample CODEOWNER with the application team.
+4. Keep the required output formats: JUnit XML for tests and Cobertura XML for
+   coverage.
 
-Use pull requests to promote develop → feature → release → main. A
-`release-eqa-*` branch deploys to EQA, while a `release-epreprod-*` branch
-deploys to ePreProd. All deployments use the same GitHub Actions artifact;
-Artifactory integration is outside the POC scope.
+## 4. Branch and environment flow
 
-## 7. Evidence
+| Branch | Action |
+|---|---|
+| `develop-*` | Build, unit test, quality, and security checks; no deployment |
+| `feature-eintN-f###` | Build once, deploy to the named EINT environment, run integration/regression, report **INT Gate** |
+| `release-eqa-*` / `hotfix-eqa-*` | Build once, deploy to EQA, test, report **Release Readiness** |
+| `release-epreprod-*` / `hotfix-epreprod-*` | Build once, deploy/test in EQA, then deploy/test the same artifact in ePreProd, report **Release Readiness** |
+| `main` | Deploy to production, smoke test, verify, then create the SemVer tag and GitHub Release |
 
-Retain:
+Use pull requests for develop → feature → release → main. The release-to-main
+pull request must have exactly one `major`, `minor`, or `patch` label.
 
-- JUnit and Cobertura artifacts
-- Build checksum and package
-- Integration/regression/system/DAST output where applicable
-- Environment deployment history
-- Production verification JSON
-- Final tag and GitHub Release
-- Exception issue and RSAM reference when used
+## 5. Rulesets and stable checks
+
+The organization rulesets require only checks that are guaranteed to report for
+their target branch:
+
+- Common: **Branch Name**, **Branch Flow**, **Coverage 80%**, and **Dependency Review**
+- Feature → release: common checks plus **INT Gate**
+- Release/hotfix → main: common checks plus **Release Readiness** and **Release Label**
+
+CodeQL is enforced through the native code-scanning rule rather than a fragile
+workflow job name. A repository ruleset is only needed as an explicit overlay
+for a critical application with stricter approvals or additional controls.
+
+## 6. POC evidence and limitations
+
+Retain build packages, checksums, JUnit/Cobertura reports, deployment history,
+test summaries, production verification, feature-ID tags, the final SemVer tag,
+and the GitHub Release.
+
+GitHub Actions artifacts stand in for Artifactory in this POC. The same artifact
+is promoted from EQA to ePreProd within a release run. Because Actions artifacts
+are run-scoped, the production run performs a new POC build on `main`; an
+enterprise implementation should replace that boundary with immutable
+Artifactory promotion.

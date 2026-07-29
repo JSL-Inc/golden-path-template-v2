@@ -5,4 +5,5 @@ mkdir -p reports/junit reports/coverage
 python -m pytest tests \
   --junitxml=reports/junit/results.xml \
   --cov=calculator \
+  --cov-fail-under=80 \
   --cov-report=xml:reports/coverage/cobertura.xml

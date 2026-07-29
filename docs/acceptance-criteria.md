@@ -5,14 +5,14 @@
 | Protected branches reject direct updates | Active GitHub ruleset |
 | Changes flow through pull requests | Ruleset plus branch-policy check |
 | Reviews and status checks are required | Active ruleset and blocked merge UI |
-| Unit-test failure blocks merge | Failed `Standard CI / Golden Path CI` |
-| Coverage is generated and enforceable | JUnit/Cobertura artifacts and 80% gate |
-| Branches follow the documented flow | Passing PR-policy status check |
+| Unit-test failure blocks merge | Failed local build/unit-test workflow |
+| Coverage is generated and enforceable | JUnit/Cobertura artifacts and required `Code Coverage / Coverage 80%` |
+| Branches follow the documented flow | Passing `PR Flow / Branch Flow` status check |
 | Releases use semantic versioning | Exactly one release label and calculated version |
 | Tag and GitHub Release are automated | Successful release workflow after verification evidence |
 | Deployments use protected Environments | QA/Production deployment history and approval |
 | Secrets are not embedded | Environment/OIDC configuration and workflow review |
-| Controls are reusable | Sandbox calling central `@v2` workflows |
+| Controls are reusable | Repositories generated from the template and enrolled in organization rulesets |
 | Responsibilities are separated | Architecture and control matrix |
 | Optional controls can be added incrementally | Security and expanded-testing extension workflows |
 
