@@ -10,9 +10,11 @@ Use `golden-path-workflows-v2` as the governance and provisioning repository.
    permissions used by the workflows.
 2. Run **Apply Golden Path Governance** once. It creates the organization custom
    properties and applies the three baseline organization rulesets.
-3. Create and attach the approved organization code-security configuration.
-   Enable CodeQL, dependency graph, Dependabot alerts/security updates, secret
-   scanning, and push protection where the organization license supports them.
+3. The governance workflow creates or updates **Golden Path Security
+   Baseline**. Provisioning attaches it to each enrolled repository, enabling
+   CodeQL default setup, dependency graph, Dependabot alerts/security updates,
+   secret scanning, and push protection where the organization license
+   supports them.
 4. Replace the sample CODEOWNER with approved teams.
 
 Organization rulesets are the default source of truth. They target repositories
