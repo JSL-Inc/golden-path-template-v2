@@ -71,7 +71,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Prepare
         run: bash .github/golden-path/prepare.sh
       - name: Run integration tests
@@ -80,7 +80,7 @@ jobs:
         run: bash .github/golden-path/integration-test.sh
       - name: Publish integration evidence
         if: always()
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: integration-evidence
           path: reports/integration/**
@@ -95,14 +95,14 @@ jobs:
       startsWith(github.ref_name, 'dependabot/')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Prepare
         run: bash .github/golden-path/prepare.sh
       - name: Run regression tests
         run: bash .github/golden-path/regression-test.sh
       - name: Publish regression evidence
         if: always()
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: regression-evidence
           path: reports/regression/**
